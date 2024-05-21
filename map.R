@@ -1,21 +1,16 @@
 library(sf)
 library(leaflet)
+library(leaflet.extras)
+library(leaflet.extras2)
 library(htmlwidgets)
+content <- "https://raw.githubusercontent.com/danwild/leaflet-velocity/master/demo/wind-gbr.json"
 study_area <- st_read("C:/Users/admin/Downloads/WAMSI/Shapefile/sat_boundary_MultiPolygon.shp")
-
-# minimum_longitude <- 115.590368
-# maximum_longitude <- 115.590368
-# minimum_latitude <- -32.086885
-# maximum_latitude <- -32.086885
-# 
-# point <- data.frame(Longitude = c(minimum_longitude),
-#                     Latitude = c(minimum_latitude))
-# point <- st_as_sf(point, coords = c("Longitude", "Latitude"), crs = 4326)
+study_area1 <- st_read("C:/Users/admin/Downloads/WAMSI/Shapefile/Zone_11/zones_11_MultiPolygon.shp")
+study_area2 <- st_read("C:/Users/admin/Downloads/WAMSI/Shapefile/Zone_11/Polygons_MultiPolygon.shp")
 point <- read.csv("C:/Users/admin/Downloads/WAMSI/points.csv")
 
 # Convert the CSV data to an sf object
 point_sf <- st_as_sf(point, coords = c("longitude", "latitude"), crs = 4326)
-
 map<-leaflet() %>%
   addProviderTiles(providers$Esri.NatGeoWorldMap, group = "National Geographic") %>%
   addProviderTiles(providers$Esri.OceanBasemap, group = "Ocean Basemap") %>%
@@ -26,17 +21,22 @@ map<-leaflet() %>%
   addLayersControl(
     position = "topright",
     baseGroups = c("National Geographic", "Ocean Basemap", "World Physical", "Dark Matter", "OpenStreetMap", "World Imagery"),
-    overlayGroups = c("Cockburn Sound", "Points"),
+    overlayGroups = c("Cockburn Sound", "NS_Polygon", "Offshore", "Points"),
     options = layersControlOptions(collapsed = FALSE)
   ) %>%
   addPolygons(data = study_area, fillOpacity = 0, group = 'Cockburn Sound',) %>%
+  addPolygons(data = study_area1, fillOpacity = 0, group = 'NS_Polygon') %>%
+  addPolygons(data = study_area2, fillOpacity = 0, group = "Offshore") %>%
   addMarkers(data = point, group = "Points",
              lng = ~point$longitude, lat = ~point$latitude,
              popup = paste("Point: ", point$Points, "<br>Latitude: ", 
-                           point$latitude, "<br>Longitude: ", point$longitude)) %>%
+                           point$latitude, "<br>Longitude: ", point$longitude, 
+                           "<br>Location: ", point$label)) %>%
   addScaleBar(position = "bottomleft") %>%
-  showGroup(c("Cockburn Sound", "Points"))
+  addDrawToolbar() %>%
+  hideGroup("Offshore")%>%
+  showGroup(c("Cockburn Sound", "NS_Polygon","Points"))
 
-
+map
 saveWidget(map, "index.html", selfcontained = TRUE)
 
