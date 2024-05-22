@@ -3,7 +3,6 @@ library(leaflet)
 library(leaflet.extras)
 library(leaflet.extras2)
 library(htmlwidgets)
-content <- "https://raw.githubusercontent.com/danwild/leaflet-velocity/master/demo/wind-gbr.json"
 study_area <- st_read("C:/Users/admin/Downloads/WAMSI/Shapefile/sat_boundary_MultiPolygon.shp")
 study_area1 <- st_read("C:/Users/admin/Downloads/WAMSI/Shapefile/Zone_11/zones_11_MultiPolygon.shp")
 study_area2 <- st_read("C:/Users/admin/Downloads/WAMSI/Shapefile/Zone_11/Polygons_MultiPolygon.shp")
@@ -14,13 +13,12 @@ point_sf <- st_as_sf(point, coords = c("longitude", "latitude"), crs = 4326)
 map<-leaflet() %>%
   addProviderTiles(providers$Esri.NatGeoWorldMap, group = "National Geographic") %>%
   addProviderTiles(providers$Esri.OceanBasemap, group = "Ocean Basemap") %>%
-  addProviderTiles(providers$Esri.WorldPhysical, group = "World Physical") %>%
   addProviderTiles(providers$CartoDB.DarkMatter, group = "Dark Matter") %>%
   addProviderTiles(providers$OpenStreetMap, group = "OpenStreetMap") %>%
   addProviderTiles(providers$Esri.WorldImagery, group = "World Imagery") %>%
   addLayersControl(
     position = "topright",
-    baseGroups = c("National Geographic", "Ocean Basemap", "World Physical", "Dark Matter", "OpenStreetMap", "World Imagery"),
+    baseGroups = c("National Geographic", "Ocean Basemap", "Dark Matter", "OpenStreetMap", "World Imagery"),
     overlayGroups = c("Cockburn Sound", "NS_Polygon", "Offshore", "Points"),
     options = layersControlOptions(collapsed = FALSE)
   ) %>%
